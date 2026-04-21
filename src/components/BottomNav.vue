@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { iconShirt, iconShirtFilled, iconWardrobe, iconWardrobeFilled } from '@/utils/icons'
 
 const route = useRoute()
+const router = useRouter()
+
+function goTo(path: string) {
+  router.replace(path)
+}
 </script>
 
 <template>
   <nav class="bottom-nav">
-    <RouterLink to="/wardrobe" class="bottom-nav__tab" :class="{ 'is-active': route.path.startsWith('/wardrobe') }">
+    <button class="bottom-nav__tab" :class="{ 'is-active': route.path.startsWith('/wardrobe') }" @click="goTo('/wardrobe')">
       <span class="bottom-nav__pill">
         <span
           class="bottom-nav__icon"
@@ -15,8 +20,8 @@ const route = useRoute()
         />
         <span class="bottom-nav__label">衣櫥</span>
       </span>
-    </RouterLink>
-    <RouterLink to="/outfits" class="bottom-nav__tab" :class="{ 'is-active': route.path === '/outfits' }">
+    </button>
+    <button class="bottom-nav__tab" :class="{ 'is-active': route.path === '/outfits' }" @click="goTo('/outfits')">
       <span class="bottom-nav__pill">
         <span
           class="bottom-nav__icon"
@@ -24,7 +29,7 @@ const route = useRoute()
         />
         <span class="bottom-nav__label">穿搭</span>
       </span>
-    </RouterLink>
+    </button>
   </nav>
 </template>
 
@@ -43,7 +48,9 @@ const route = useRoute()
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--color-text-muted);
 }
 

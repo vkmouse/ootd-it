@@ -21,6 +21,11 @@ const router = createRouter({
       component: ClothesEditView,
     },
     {
+      path: '/wardrobe/:id/edit',
+      name: 'wardrobe-edit',
+      component: ClothesEditView,
+    },
+    {
       path: '/outfits',
       name: 'outfits',
       component: OutfitsView,

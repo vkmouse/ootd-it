@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import BottomNav from './components/BottomNav.vue'
 
@@ -9,6 +10,12 @@ onMounted(() => {
     document.body.classList.add('light')
   }
 })
+
+const route = useRoute()
+// 衣物新增／編輯頁面不顯示底部 Tab
+const showBottomNav = computed(() =>
+  route.name !== 'wardrobe-new' && route.name !== 'wardrobe-edit'
+)
 </script>
 
 <template>
@@ -16,7 +23,7 @@ onMounted(() => {
   <main class="app-main">
     <RouterView />
   </main>
-  <BottomNav />
+  <BottomNav v-if="showBottomNav" />
 </template>
 
 <style scoped>

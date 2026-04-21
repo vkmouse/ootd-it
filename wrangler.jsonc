@@ -23,6 +23,12 @@
 			"database_name": "ootd-it-db",
 			"database_id": "local"
 		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "IMAGES",
+			"bucket_name": "ootd-it-images"
+		}
 	]
 	/**
 	 * Smart Placement

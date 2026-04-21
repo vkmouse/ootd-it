@@ -1,26 +1,4 @@
-## ADDED Requirements
-
-### Requirement: Wardrobe list page
-The wardrobe page SHALL display all clothing items belonging to the authenticated user, fetched from `GET /api/clothes`.
-
-#### Scenario: Items displayed
-- **WHEN** the user navigates to `/wardrobe`
-- **THEN** the system SHALL fetch and display all clothing items for the current user
-
-#### Scenario: Empty state
-- **WHEN** the user has no clothing items
-- **THEN** the page SHALL display an empty state message
-
----
-
-### Requirement: Add clothing item button
-The wardrobe list page SHALL display a button to navigate to the new clothing item form.
-
-#### Scenario: Navigate to new item form
-- **WHEN** the user taps the add button on `/wardrobe`
-- **THEN** the router SHALL navigate to `/wardrobe/new`
-
----
+## MODIFIED Requirements
 
 ### Requirement: Clothing item form
 The clothing edit page SHALL serve both create mode (`/wardrobe/new`) and edit mode (`/wardrobe/:id/edit`) using the same component. The form SHALL contain the following fields: 名稱 (name), 類型 (category), 顏色 (color), 尺寸 (size), 入手時間 (acquired_date, yyyyMM), 入手價格 (acquired_price), 圖片 (image).
@@ -30,7 +8,7 @@ The clothing edit page SHALL serve both create mode (`/wardrobe/new`) and edit m
 - **THEN** the size field SHALL show options: S, M, L, XL, XXL
 
 #### Scenario: Bottoms size options
-- **WHEN** the user selects category "錯子"
+- **WHEN** the user selects category "褲子"
 - **THEN** the size field SHALL show waist sizes 28–38
 
 #### Scenario: Shoes size options
@@ -110,6 +88,17 @@ The Worker SHALL expose REST endpoints scoped to the authenticated user's email.
 
 ---
 
+### Requirement: Add clothing item button
+The wardrobe list page SHALL display a button to navigate to the new clothing item form.
+
+#### Scenario: Navigate to new item form
+- **WHEN** the user taps the add button on `/wardrobe`
+- **THEN** the router SHALL navigate to `/wardrobe/new`
+
+---
+
+## ADDED Requirements
+
 ### Requirement: 返回按鈕
 衣物新增（`/wardrobe/new`）與編輯（`/wardrobe/:id/edit`）頁面，左上角 SHALL 顯示返回按鈕（使用 `icon-arrow-left` SVG icon），點擊後 SHALL 返回上一頁（`router.back()`）。
 
@@ -120,3 +109,9 @@ The Worker SHALL expose REST endpoints scoped to the authenticated user's email.
 #### Scenario: 瀏覽器上一頁可返回
 - **WHEN** 使用者在衣物新增或編輯頁面按下瀏覽器上一頁（或 Android 返回鍵）
 - **THEN** 頁面 SHALL 正確返回至 `/wardrobe`（因為 Tab 切換使用 replace，歷史棧中 `/wardrobe` 在 `/wardrobe/new` 之前）
+
+## REMOVED Requirements
+
+### Requirement: Clothing item form（舊欄位 acquired_occasion）
+**Reason**: `acquired_occasion` 欄位改為 `acquired_date`（yyyyMM 格式），舊欄位定義已由上方 MODIFIED 取代。
+**Migration**: 執行 `ALTER TABLE clothes RENAME COLUMN acquired_occasion TO acquired_date`；前端欄位名稱同步更新。

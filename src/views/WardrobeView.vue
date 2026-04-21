@@ -9,6 +9,7 @@ interface ClothesItem {
   category: string
   color: string | null
   size: string | null
+  image_url: string | null
 }
 
 const router = useRouter()
@@ -30,10 +31,12 @@ onMounted(async () => {
       <ClothesCard
         v-for="item in clothes"
         :key="item.id"
+        :id="item.id"
         :name="item.name"
         :category="item.category"
         :color="item.color"
         :size="item.size"
+        :image-url="item.image_url"
       />
     </div>
 

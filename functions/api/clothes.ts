@@ -26,7 +26,7 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
     category: string
     color: string | null
     size: string | null
-    acquired_occasion: string | null
+    acquired_date: string | null
     acquired_price: number | null
   }>()
 
@@ -34,7 +34,7 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
   const createdAt = new Date().toISOString()
 
   await context.env.DB.prepare(
-    `INSERT INTO clothes (id, owner_email, name, category, color, size, acquired_occasion, acquired_price, image_url, created_at)
+    `INSERT INTO clothes (id, owner_email, name, category, color, size, acquired_date, acquired_price, image_url, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`
   )
     .bind(
@@ -44,7 +44,7 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
       body.category,
       body.color,
       body.size,
-      body.acquired_occasion,
+      body.acquired_date,
       body.acquired_price,
       createdAt
     )
