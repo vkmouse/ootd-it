@@ -16,4 +16,18 @@ export default defineConfig({
 			'@': fileURLToPath(new URL('./src', import.meta.url))
 		},
 	},
+	server: {
+		host: '0.0.0.0',
+		port: 10000,
+		// Docker volume needs polling to detect file changes reliably.
+		watch: {
+			usePolling: true
+		},
+		// Support HMR from the host browser.
+		hmr: {
+			host: 'localhost',
+			port: 10000,
+			clientPort: 10000
+		}
+	}
 })

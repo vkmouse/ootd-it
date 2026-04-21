@@ -66,3 +66,11 @@
 - `:root` 對應 **dark mode**（預設）。
 - `body.light` 對應 **light mode**（透過 `document.body.classList.toggle('light')` 切換）。
 - 偏好存入 `localStorage`，鍵名 `theme`，值為 `'light'` 或不存在（dark）。
+
+**版面寬度限制**：
+- 網頁版最大寬度為 **480px**，不實作超過 480px 寬度的設計或 RWD breakpoint。
+
+**SVG Icon 管理規則**：
+- 所有 SVG icon 放置於 `src/assets/icons/`，檔名格式為 `icon-*.svg`（可包含多個 `-`，例如 `icon-arrow-left.svg`）。
+- SVG 屬性固定為 `viewBox="0 0 24 24" fill="none" stroke="currentColor"`。
+- 所有元件取用 icon 時，必須從 `@/utils/icons` import，不得直接 import SVG 檔案。
