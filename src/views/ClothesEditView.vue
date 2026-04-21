@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { iconArrowLeft } from '@/utils/icons'
 
 const router = useRouter()
 const route = useRoute()
@@ -144,14 +143,6 @@ async function submit() {
 
 <template>
   <div class="clothes-edit">
-    <!-- 頂部導覽列（返回按鈕） -->
-    <div class="clothes-edit__topbar">
-      <button class="clothes-edit__back-btn" @click="router.back()" aria-label="返回">
-        <span class="clothes-edit__back-icon" v-html="iconArrowLeft" />
-      </button>
-      <span class="clothes-edit__title">{{ isEdit ? '編輯衣物' : '新增衣物' }}</span>
-    </div>
-
     <form class="clothes-form" @submit.prevent="submit">
       <!-- 圖片 -->
       <div class="clothes-form__field">
@@ -227,45 +218,6 @@ async function submit() {
   flex-direction: column;
 }
 
-.clothes-edit__topbar {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--color-bg-sub);
-}
-
-.clothes-edit__back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-main);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-sm);
-}
-
-.clothes-edit__back-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-}
-
-.clothes-edit__back-icon :deep(svg) {
-  width: 24px;
-  height: 24px;
-}
-
-.clothes-edit__title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text-main);
-}
-
 .clothes-form {
   display: flex;
   flex-direction: column;
@@ -280,7 +232,11 @@ async function submit() {
 }
 
 .clothes-form__label {
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--color-text-muted);
 }
 
@@ -290,7 +246,7 @@ async function submit() {
 
 .clothes-form__image-preview {
   width: 100%;
-  height: 160px;
+  aspect-ratio: 1 / 1;
   background-color: var(--color-bg-sub);
   border-radius: var(--radius-md);
   display: flex;
@@ -316,9 +272,10 @@ async function submit() {
   background-color: var(--color-bg-sub);
   color: var(--color-text-main);
   border: none;
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-md);
   font-size: var(--font-size-base);
+  font-family: var(--font-body);
   width: 100%;
   outline: none;
 }

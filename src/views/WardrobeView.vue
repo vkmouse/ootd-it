@@ -24,7 +24,8 @@ onMounted(async () => {
 <template>
   <div class="wardrobe">
     <div v-if="clothes.length === 0" class="wardrobe__empty">
-      <p>還沒有任何衣物，按下「＋」新增吧！</p>
+      <p class="wardrobe__empty-title">衣橱是空的</p>
+      <p class="wardrobe__empty-sub">按下「＋」開始記錄你的穿搭吧！</p>
     </div>
 
     <div class="wardrobe__list">
@@ -55,14 +56,25 @@ onMounted(async () => {
 
 .wardrobe__empty {
   text-align: center;
-  color: var(--color-text-muted);
   padding: var(--spacing-xl) 0;
-  font-size: var(--font-size-base);
+}
+
+.wardrobe__empty-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.wardrobe__empty-sub {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 .wardrobe__list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-sm);
 }
 

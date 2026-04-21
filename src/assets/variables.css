@@ -1,15 +1,21 @@
-/* Dark mode（預設）— 來自 Dark Modern */
+/* 字體 */
+:root {
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Noto Sans TC', sans-serif;
+}
+
+/* Dark mode（預設）*/
 :root {
   /* 品牌顏色 */
-  --color-primary:        #0078D4;
-  --color-primary-hover:  #026EC1;
-  --color-secondary:      #2B2B2B;
+  --color-primary:        #C8A96E;
+  --color-primary-hover:  #B8956A;
+  --color-secondary:      #252520;
 
   /* 文字與背景顏色 */
-  --color-text-main:      #CCCCCC;
-  --color-text-muted:     #9D9D9D;
-  --color-bg-main:        #313131;
-  --color-bg-sub:         #181818;
+  --color-text-main:      #E8E4DC;
+  --color-text-muted:     #7A7770;
+  --color-bg-main:        #191919;
+  --color-bg-sub:         #0F0F0F;
 
   /* 間距系統（4px 倍數） */
   --spacing-xs: 4px;
@@ -35,14 +41,14 @@
   --bottom-nav-height: 80px;
 }
 
-/* Light mode — 來自 Light Modern，透過 body.light 切換 */
+/* Light mode — 透過 body.light 切換 */
 body.light {
-  --color-primary:        #005FB8;
-  --color-primary-hover:  #0258A8;
-  --color-secondary:      #E5E5E5;
+  --color-primary:        #A07840;
+  --color-primary-hover:  #8C6830;
+  --color-secondary:      #ECEAE4;
 
-  --color-text-main:      #3B3B3B;
-  --color-text-muted:     #767676;
+  --color-text-main:      #1A1816;
+  --color-text-muted:     #888480;
   --color-bg-main:        #FFFFFF;
-  --color-bg-sub:         #F8F8F8;
+  --color-bg-sub:         #F4F4F0;
 }

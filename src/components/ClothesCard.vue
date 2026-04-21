@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// 單件衣物的卡片，以背景填色區隔，無框線、無陰影
+// 單件衣物的卡片，圖片優先直向設計，無框線、無陰影
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{
@@ -13,6 +13,27 @@ const props = defineProps<{
 
 const router = useRouter()
 
+// 類型對應中文標籤
+const CATEGORY_LABELS: Record<string, string> = {
+  tops:        '上衣',
+  bottoms:     '褲子',
+  outerwear:   '外套',
+  shoes:       '鞋子',
+  accessories: '配件',
+}
+
+// 類型對應佔位符背景色
+const PLACEHOLDER_COLORS: Record<string, string> = {
+  tops:        '#8C6E54',
+  bottoms:     '#4A4A44',
+  outerwear:   '#5C5040',
+  shoes:       '#6B5040',
+  accessories: '#3C3C38',
+}
+
+const placeholderColor = PLACEHOLDER_COLORS[props.category] ?? '#3C3C38'
+const categoryLabel = CATEGORY_LABELS[props.category] ?? props.category
+
 function goToEdit() {
   router.push(`/wardrobe/${props.id}/edit`)
 }
@@ -20,8 +41,11 @@ function goToEdit() {
 
 <template>
   <div class="clothes-card" @click="goToEdit">
-    <!-- 圖片或佔位符 -->
-    <div class="clothes-card__image" aria-hidden="true">
+    <!-- 圖片區（160px 高） -->
+    <div
+      class="clothes-card__image"
+      :style="!imageUrl ? { backgroundColor: placeholderColor } : {}"
+    >
       <img
         v-if="imageUrl"
         :src="`/api/clothes/${id}/image`"
@@ -29,9 +53,11 @@ function goToEdit() {
         alt=""
       />
     </div>
-    <div class="clothes-card__info">
+
+    <!-- 文字區 -->
+    <div class="clothes-card__body">
       <p class="clothes-card__name">{{ name }}</p>
-      <p class="clothes-card__meta">{{ category }}<span v-if="color"> · {{ color }}</span><span v-if="size"> · {{ size }}</span></p>
+      <span class="clothes-card__tag">{{ categoryLabel }}</span>
     </div>
   </div>
 </template>
@@ -39,25 +65,19 @@ function goToEdit() {
 <style scoped>
 .clothes-card {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
+  flex-direction: column;
   background-color: var(--color-bg-sub);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-md);
+  overflow: hidden;
   cursor: pointer;
 }
 
 .clothes-card__image {
-  font-size: 2rem;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-secondary);
-  border-radius: var(--radius-md);
-  flex-shrink: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  flex-shrink: 0;
 }
 
 .clothes-card__photo {
@@ -66,15 +86,27 @@ function goToEdit() {
   object-fit: cover;
 }
 
+.clothes-card__body {
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
 .clothes-card__name {
+  font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text-main);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.clothes-card__meta {
+.clothes-card__tag {
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin-top: var(--spacing-xs);
+  color: var(--color-primary);
+  font-weight: 500;
 }
 </style>

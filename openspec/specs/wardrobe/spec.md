@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
 ### Requirement: 衣櫥列表頁面 (Wardrobe list page)
-衣櫥頁面 SHALL 顯示屬於該驗證使用者的所有衣物項目，資料由 `GET /api/clothes` 獲取。
+衣橱頁面 SHALL 以 2 欄網格（grid）顯示衣物項目，每個項目以圖片優先的直向卡片呈現。空列表時 SHALL 顯示大字編輯風格的空狀態文案。
 
-#### Scenario: 項目顯示
-- **WHEN** 使用者導航至 `/wardrobe`
-- **THEN** 系統 SHALL 獲取並顯示目前使用者的所有衣物項目
+#### Scenario: 項目以 2 欄 grid 顯示
+- **WHEN** 使用者導航至 `/wardrobe` 且有衣物項目
+- **THEN** 系統 SHALL 以 2 欄等寬網格排列顯示所有衣物卡片
 
 #### Scenario: 空狀態
 - **WHEN** 使用者沒有任何衣物項目
-- **THEN** 頁面 SHALL 顯示空狀態提示訊息
+- **THEN** 頁面 SHALL 顯示大字空狀態文案（例如「衣橱是空的」），居中排列，字體使用 `--font-display`
 
 ---
 
@@ -73,19 +73,23 @@
 ---
 
 ### Requirement: 衣物卡片 (Clothing item card)
-衣櫥列表中的每個項目 SHALL 以卡片形式顯示，包含：圖片（或佔位符）、名稱、類型、顏色及尺寸。
+衣橱列表中的每件衣物 SHALL 以直向圖片優先卡片呈現：圖片區占卡片上方（寬高比 3:4），名稱與類型標籤在圖片下方；無照片時顯示依類型區分的純色佔位符。
 
-#### Scenario: 卡片顯示項目詳情
-- **WHEN** 衣物項目在列表中渲染時
-- **THEN** 卡片 SHALL 顯示名稱、類型、顏色與尺寸
+#### Scenario: 圖片優先佈局
+- **WHEN** 渲染衣物卡片時
+- **THEN** 卡片 SHALL 先顯示寬高比 3:4 的圖片區域，下方依序顯示衣物名稱與類型標籤
 
-#### Scenario: 卡片顯示已上傳圖片
-- **WHEN** 衣物項目擁有圖片（`image_url` 非 null）
-- **THEN** 卡片 SHALL 透過 `<img src="/api/clothes/{id}/image">` 顯示圖片
+#### Scenario: 有圖片時顯示照片
+- **WHEN** 衣物有圖片（`image_url` 非 null）
+- **THEN** 圖片區域 SHALL 顯示 `<img src="/api/clothes/{id}/image">`，cover 對齊填湋
 
-#### Scenario: 無圖片時顯示佔位符
-- **WHEN** 衣物項目沒有圖片（`image_url` 為 null）
-- **THEN** 卡片 SHALL 顯示佔位符背景
+#### Scenario: 無圖片時顯示類型色佔位符
+- **WHEN** 衣物無圖片（`image_url` 為 null）
+- **THEN** 圖片區域 SHALL 以對應類型的色調純色背景填充（如「上衣」用暖沙色、「褲子」用石墨色、「鞋子」用棕色等）
+
+#### Scenario: 名稱過長截斷
+- **WHEN** 衣物名稱超過 2 行時
+- **THEN** 名稱文字 SHALL 在第 2 行截斷（`-webkit-line-clamp: 2`）
 
 ---
 
