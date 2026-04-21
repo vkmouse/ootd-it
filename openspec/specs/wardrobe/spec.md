@@ -1,112 +1,112 @@
 ## ADDED Requirements
 
-### Requirement: Wardrobe list page
-The wardrobe page SHALL display all clothing items belonging to the authenticated user, fetched from `GET /api/clothes`.
+### Requirement: 衣櫥列表頁面 (Wardrobe list page)
+衣櫥頁面 SHALL 顯示屬於該驗證使用者的所有衣物項目，資料由 `GET /api/clothes` 獲取。
 
-#### Scenario: Items displayed
-- **WHEN** the user navigates to `/wardrobe`
-- **THEN** the system SHALL fetch and display all clothing items for the current user
+#### Scenario: 項目顯示
+- **WHEN** 使用者導航至 `/wardrobe`
+- **THEN** 系統 SHALL 獲取並顯示目前使用者的所有衣物項目
 
-#### Scenario: Empty state
-- **WHEN** the user has no clothing items
-- **THEN** the page SHALL display an empty state message
-
----
-
-### Requirement: Add clothing item button
-The wardrobe list page SHALL display a button to navigate to the new clothing item form.
-
-#### Scenario: Navigate to new item form
-- **WHEN** the user taps the add button on `/wardrobe`
-- **THEN** the router SHALL navigate to `/wardrobe/new`
+#### Scenario: 空狀態
+- **WHEN** 使用者沒有任何衣物項目
+- **THEN** 頁面 SHALL 顯示空狀態提示訊息
 
 ---
 
-### Requirement: Clothing item form
-The clothing edit page SHALL serve both create mode (`/wardrobe/new`) and edit mode (`/wardrobe/:id/edit`) using the same component. The form SHALL contain the following fields: 名稱 (name), 類型 (category), 顏色 (color), 尺寸 (size), 入手時間 (acquired_date, yyyyMM), 入手價格 (acquired_price), 圖片 (image).
+### Requirement: 新增衣物按鈕 (Add clothing item button)
+衣櫥列表頁面 SHALL 顯示一個按鈕，用於導航至新增衣物表單。
 
-#### Scenario: Category drives size options
-- **WHEN** the user selects category "上衣" or "外套"
-- **THEN** the size field SHALL show options: S, M, L, XL, XXL
-
-#### Scenario: Bottoms size options
-- **WHEN** the user selects category "錯子"
-- **THEN** the size field SHALL show waist sizes 28–38
-
-#### Scenario: Shoes size options
-- **WHEN** the user selects category "鞋子"
-- **THEN** the size field SHALL show US sizes 6–12 (including half sizes)
-
-#### Scenario: Accessories hide size
-- **WHEN** the user selects category "配件"
-- **THEN** the size field SHALL be hidden
-
-#### Scenario: Edit mode prefills form
-- **WHEN** the user navigates to `/wardrobe/:id/edit`
-- **THEN** the form SHALL fetch `GET /api/clothes/:id` and prefill all fields with existing data
-
-#### Scenario: acquired_date format displayed
-- **WHEN** an existing item has `acquired_date` value (e.g., `202503`)
-- **THEN** the date input SHALL display it as `2025-03` (input type="month")
+#### Scenario: 導航至新項目表單
+- **WHEN** 使用者點擊 `/wardrobe` 上的新增按鈕
+- **THEN** 路由 SHALL 導航至 `/wardrobe/new`
 
 ---
 
-### Requirement: Save clothing item
-Submitting the clothing form in **create mode** SHALL call `POST /api/clothes`. Submitting in **edit mode** SHALL call `PATCH /api/clothes/:id`. Both SHALL navigate back to `/wardrobe` on success.
+### Requirement: 衣物表單 (Clothing item form)
+衣物編輯頁面 SHALL 使用相同組件同時支援建立模式 (`/wardrobe/new`) 與編輯模式 (`/wardrobe/:id/edit`)。表單 SHALL 包含以下欄位：名稱 (name)、類型 (category)、顏色 (color)、尺寸 (size)、入手時間 (acquired_date, yyyyMM)、入手價格 (acquired_price)、圖片 (image)。
 
-#### Scenario: Successful create
-- **WHEN** the user fills in the required fields and taps save in create mode
-- **THEN** the system SHALL POST the data to `/api/clothes` and redirect to `/wardrobe`
+#### Scenario: 類型決定尺寸選項 (上衣/外套)
+- **WHEN** 使用者選擇類型為「上衣」或「外套」
+- **THEN** 尺寸欄位 SHALL 顯示選項：S, M, L, XL, XXL
 
-#### Scenario: Successful edit
-- **WHEN** the user modifies fields and taps save in edit mode
-- **THEN** the system SHALL PATCH `/api/clothes/:id` with the updated data and redirect to `/wardrobe`
+#### Scenario: 下著尺寸選項
+- **WHEN** 使用者選擇類型為「褲子」
+- **THEN** 尺寸欄位 SHALL 顯示腰圍尺寸 28–38
 
-#### Scenario: Required field validation
-- **WHEN** the user submits the form without a name
-- **THEN** the form SHALL not submit and SHALL indicate the name is required
+#### Scenario: 鞋子尺寸選項
+- **WHEN** 使用者選擇類型為「鞋子」
+- **THEN** 尺寸欄位 SHALL 顯示 US 尺寸 6–12 (包含半號)
 
-#### Scenario: acquired_date stored as yyyyMM
-- **WHEN** the user picks a date via the month input (value: `2025-03`)
-- **THEN** the system SHALL send `acquired_date: "202503"` to the API
+#### Scenario: 配件隱藏尺寸
+- **WHEN** 使用者選擇類型為「配件」
+- **THEN** 尺寸欄位 SHALL 隱藏
 
----
+#### Scenario: 編輯模式預填表單
+- **WHEN** 使用者導航至 `/wardrobe/:id/edit`
+- **THEN** 表單 SHALL 呼叫 `GET /api/clothes/:id` 並以現有資料預填所有欄位
 
-### Requirement: Clothing item card
-Each item in the wardrobe list SHALL be shown as a card displaying: image (or placeholder), name, category, color, and size.
-
-#### Scenario: Card shows item details
-- **WHEN** a clothing item is rendered in the list
-- **THEN** the card SHALL display name, category, color, and size
-
-#### Scenario: Card shows uploaded image
-- **WHEN** a clothing item has an image (`image_url` is not null)
-- **THEN** the card SHALL display the image via `<img src="/api/clothes/{id}/image">`
-
-#### Scenario: Card shows placeholder when no image
-- **WHEN** a clothing item has no image (`image_url` is null)
-- **THEN** the card SHALL display a placeholder background
+#### Scenario: 入手時間格式顯示
+- **WHEN** 現有項目的 `acquired_date` 值為（例如 `202503`）
+- **THEN** 日期輸入框 SHALL 將其顯示為 `2025-03` (input type="month")
 
 ---
 
-### Requirement: Clothes REST API
-The Worker SHALL expose REST endpoints scoped to the authenticated user's email.
+### Requirement: 儲存衣物項目 (Save clothing item)
+在 **建立模式** 下送出表單 SHALL 呼叫 `POST /api/clothes`。在 **編輯模式** 下送出表單 SHALL 呼叫 `PATCH /api/clothes/:id`。成功後皆 SHALL 導航回 `/wardrobe`。
 
-#### Scenario: List clothes
-- **WHEN** a GET request is made to `/api/clothes`
-- **THEN** the Worker SHALL return all records WHERE owner_email matches the authenticated user
+#### Scenario: 成功建立
+- **WHEN** 使用者在建立模式下填寫必填欄位並點擊儲存
+- **THEN** 系統 SHALL 將資料 POST 至 `/api/clothes` 並重新導向至 `/wardrobe`
 
-#### Scenario: Create clothes
-- **WHEN** a POST request is made to `/api/clothes` with valid JSON body
-- **THEN** the Worker SHALL INSERT a new record with a generated UUID and the authenticated user's email as owner_email
+#### Scenario: 成功編輯
+- **WHEN** 使用者在編輯模式下修改欄位並點擊儲存
+- **THEN** 系統 SHALL 以更新的資料 PATCH `/api/clothes/:id` 並重新導向至 `/wardrobe`
 
-#### Scenario: Get single clothing item
-- **WHEN** a GET request is made to `/api/clothes/:id`
-- **THEN** the Worker SHALL return the record matching the id and owner_email
+#### Scenario: 必填欄位驗證
+- **WHEN** 使用者在未填寫名稱的情況下送出表單
+- **THEN** 表單 SHALL 不可送出，且 SHALL 提示名稱為必填
 
-#### Scenario: Update clothing item
-- **WHEN** a PATCH request is made to `/api/clothes/:id` with a partial JSON body
-- **THEN** the Worker SHALL UPDATE the matching record for the authenticated user
+#### Scenario: 入手時間以 yyyyMM 格式儲存
+- **WHEN** 使用者透過月份選取器選擇日期（值為 `2025-03`）
+- **THEN** 系統 SHALL 向 API 發送 `acquired_date: "202503"`
+
+---
+
+### Requirement: 衣物卡片 (Clothing item card)
+衣櫥列表中的每個項目 SHALL 以卡片形式顯示，包含：圖片（或佔位符）、名稱、類型、顏色及尺寸。
+
+#### Scenario: 卡片顯示項目詳情
+- **WHEN** 衣物項目在列表中渲染時
+- **THEN** 卡片 SHALL 顯示名稱、類型、顏色與尺寸
+
+#### Scenario: 卡片顯示已上傳圖片
+- **WHEN** 衣物項目擁有圖片（`image_url` 非 null）
+- **THEN** 卡片 SHALL 透過 `<img src="/api/clothes/{id}/image">` 顯示圖片
+
+#### Scenario: 無圖片時顯示佔位符
+- **WHEN** 衣物項目沒有圖片（`image_url` 為 null）
+- **THEN** 卡片 SHALL 顯示佔位符背景
+
+---
+
+### Requirement: 衣物 REST API (Clothes REST API)
+Worker SHALL 提供 REST 端點，且範圍限定於已驗證使用者的電子郵件。
+
+#### Scenario: 列表查詢
+- **WHEN** 發送 GET 請求至 `/api/clothes`
+- **THEN** Worker SHALL 回傳所有 `owner_email` 符合該驗證使用者的紀錄
+
+#### Scenario: 建立衣物
+- **WHEN** 發送包含有效 JSON body 的 POST 請求至 `/api/clothes`
+- **THEN** Worker SHALL 插入一筆新紀錄，包含產生的 UUID 及該驗證使用者的電子郵件作為 `owner_email`
+
+#### Scenario: 獲取單一衣物項目
+- **WHEN** 發送 GET 請求至 `/api/clothes/:id`
+- **THEN** Worker SHALL 回傳符合該 id 且 `owner_email` 符合的紀錄
+
+#### Scenario: 更新衣物項目
+- **WHEN** 發送包含部分內容 JSON body 的 PATCH 請求至 `/api/clothes/:id`
+- **THEN** Worker SHALL 為該驗證使用者更新對應的紀錄
 
 ---
 
@@ -119,4 +119,4 @@ The Worker SHALL expose REST endpoints scoped to the authenticated user's email.
 
 #### Scenario: 瀏覽器上一頁可返回
 - **WHEN** 使用者在衣物新增或編輯頁面按下瀏覽器上一頁（或 Android 返回鍵）
-- **THEN** 頁面 SHALL 正確返回至 `/wardrobe`（因為 Tab 切換使用 replace，歷史棧中 `/wardrobe` 在 `/wardrobe/new` 之前）
+- **THEN** 頁面 SHALL 正確返回至 `/wardrobe`（因為分頁切換使用 replace，歷史紀錄棧中 `/wardrobe` 會在 `/wardrobe/new` 之前）

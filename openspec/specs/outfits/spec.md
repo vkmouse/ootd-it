@@ -1,8 +1,8 @@
 ## ADDED Requirements
 
-### Requirement: Outfits placeholder page
-The outfits page SHALL exist at `/outfits` and display only the page title "穿搭". No other content is required at this stage.
+### Requirement: 穿搭佔位頁面 (Outfits placeholder page)
+穿搭頁面 SHALL 存在於 `/outfits` 並僅顯示頁面標題「穿搭」。此階段不需要其他內容。
 
-#### Scenario: Outfits page renders
-- **WHEN** the user navigates to `/outfits`
-- **THEN** the page SHALL render without errors and display the text "穿搭"
+#### Scenario: 渲染穿搭頁面
+- **WHEN** 使用者導航至 `/outfits`
+- **THEN** 頁面 SHALL 正常渲染且無錯誤，並顯示文字「穿搭」
