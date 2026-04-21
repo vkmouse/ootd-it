@@ -1,0 +1,48 @@
+/* Dark mode（預設）— 來自 Dark Modern */
+:root {
+  /* 品牌顏色 */
+  --color-primary:        #0078D4;
+  --color-primary-hover:  #026EC1;
+  --color-secondary:      #2B2B2B;
+
+  /* 文字與背景顏色 */
+  --color-text-main:      #CCCCCC;
+  --color-text-muted:     #9D9D9D;
+  --color-bg-main:        #313131;
+  --color-bg-sub:         #181818;
+
+  /* 間距系統（4px 倍數） */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* 字體大小 */
+  --font-size-sm:   0.875rem; /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg:   1.125rem; /* 18px */
+  --font-size-xl:   1.5rem;   /* 24px */
+
+  /* 圓角系統 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* 版面高度 */
+  --header-height:     52px;
+  --bottom-nav-height: 80px;
+}
+
+/* Light mode — 來自 Light Modern，透過 body.light 切換 */
+body.light {
+  --color-primary:        #005FB8;
+  --color-primary-hover:  #0258A8;
+  --color-secondary:      #E5E5E5;
+
+  --color-text-main:      #3B3B3B;
+  --color-text-muted:     #767676;
+  --color-bg-main:        #FFFFFF;
+  --color-bg-sub:         #F8F8F8;
+}

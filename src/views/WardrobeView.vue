@@ -66,7 +66,7 @@ onMounted(async () => {
 /* 浮動新增按鈕 */
 .wardrobe__add-btn {
   position: fixed;
-  bottom: calc(52px + var(--spacing-lg));
+  bottom: calc(var(--bottom-nav-height) + var(--spacing-lg));
   right: max(var(--spacing-lg), calc(50vw - 480px / 2 + var(--spacing-lg)));
   width: 52px;
   height: 52px;

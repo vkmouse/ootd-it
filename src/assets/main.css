@@ -1,29 +1,3 @@
+@import './variables.css';
 @import './base.css';
-
-/* Reset */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* 全域 body 樣式 */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: var(--font-size-base);
-  color: var(--color-text-main);
-  background-color: var(--color-bg-sub);
-  min-height: 100dvh;
-}
-
-/* App 容器：置中並限制最大寬度 480px */
-#app {
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 100dvh;
-  background-color: var(--color-bg-main);
-  display: flex;
-  flex-direction: column;
-}
+@import './layout.css';

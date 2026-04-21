@@ -32,7 +32,7 @@ const route = useRoute()
 .bottom-nav {
   display: flex;
   background-color: var(--color-bg-sub);
-  height: 80px;
+  height: var(--bottom-nav-height);
   flex-shrink: 0;
   align-items: flex-start;
   padding-top: var(--spacing-sm);

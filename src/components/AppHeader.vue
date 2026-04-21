@@ -45,7 +45,7 @@ function toggleTheme() {
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-md);
   background-color: var(--color-bg-sub);
-  height: 52px;
+  height: var(--header-height);
   flex-shrink: 0;
 }
 
