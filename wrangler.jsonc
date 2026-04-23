@@ -27,7 +27,8 @@
 	"r2_buckets": [
 		{
 			"binding": "IMAGES",
-			"bucket_name": "ootd-it-images"
+			"bucket_name": "ootd-it-images",
+			"jurisdiction": "eu"
 		}
 	]
 	/**
