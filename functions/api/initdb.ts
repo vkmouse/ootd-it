@@ -24,5 +24,14 @@ export async function onRequestGet(context: EventContext<Env, string, unknown>):
     // 若欄位不存在或已改名，忽略錯誤
   }
 
+  // Migration：新增 color_note 欄位
+  try {
+    await context.env.DB.prepare(
+      `ALTER TABLE clothes ADD COLUMN color_note TEXT`
+    ).run()
+  } catch {
+    // 若欄位已存在，忽略錯誤
+  }
+
   return Response.json({ ok: true, message: 'clothes table initialized' })
 }

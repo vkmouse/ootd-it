@@ -34,6 +34,7 @@ export async function onRequestPatch(
     name?: string
     category?: string
     color?: string | null
+    color_note?: string | null
     size?: string | null
     acquired_date?: string | null
     acquired_price?: number | null
@@ -45,6 +46,7 @@ export async function onRequestPatch(
   if (body.name !== undefined) { fields.push('name = ?'); values.push(body.name) }
   if (body.category !== undefined) { fields.push('category = ?'); values.push(body.category) }
   if ('color' in body) { fields.push('color = ?'); values.push(body.color ?? null) }
+  if ('color_note' in body) { fields.push('color_note = ?'); values.push(body.color_note ?? null) }
   if ('size' in body) { fields.push('size = ?'); values.push(body.size ?? null) }
   if ('acquired_date' in body) { fields.push('acquired_date = ?'); values.push(body.acquired_date ?? null) }
   if ('acquired_price' in body) { fields.push('acquired_price = ?'); values.push(body.acquired_price ?? null) }
