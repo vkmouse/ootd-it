@@ -28,7 +28,7 @@
 		{
 			"binding": "IMAGES",
 			"bucket_name": "ootd-it-images",
-			"jurisdiction": ""
+			"jurisdiction": "fedramp"
 		}
 	]
 	/**
