@@ -27,8 +27,7 @@
 	"r2_buckets": [
 		{
 			"binding": "IMAGES",
-			"bucket_name": "ootd-it-images",
-			"jurisdiction": "fedramp"
+			"bucket_name": "ootd-it-images"
 		}
 	]
 	/**
