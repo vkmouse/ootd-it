@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:full": "fuser -k 10000/tcp 10001/tcp || true && vite --host 0.0.0.0 --port 10000 & wait-on tcp:10000 && npx wrangler pages dev --proxy 10000 --port 10001 --ip 0.0.0.0",
+    "dev:full": "fuser -k 10000/tcp 10001/tcp || true && vite --host 0.0.0.0 --port 10000 & wait-on tcp:10000 && npx wrangler pages dev --proxy 10000 --port 10001 --ip 0.0.0.0 --d1 DB=local --r2 IMAGES=ootd-it-images",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "npm run build && wrangler pages dev",
     "build-only": "vite build",

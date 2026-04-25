@@ -16,20 +16,6 @@
 	},
 	"compatibility_flags": [
 		"nodejs_compat"
-	],
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "ootd-it-db",
-			"database_id": "local"
-		}
-	],
-	"r2_buckets": [
-		{
-			"binding": "IMAGES",
-			"bucket_name": "ootd-it-images",
-			"jurisdiction": "eu"
-		}
 	]
 	/**
 	 * Smart Placement
