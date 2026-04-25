@@ -65,3 +65,32 @@ export async function onRequestPatch(
 
   return Response.json({ ok: true })
 }
+
+export async function onRequestDelete(
+  context: EventContext<Env, 'id', unknown>
+): Promise<Response> {
+  const ownerEmail = getOwnerEmail(context.request)
+  const id = context.params.id
+
+  const row = await context.env.DB.prepare(
+    'SELECT image_url FROM clothes WHERE id = ? AND owner_email = ?'
+  )
+    .bind(id, ownerEmail)
+    .first<{ image_url: string | null }>()
+
+  if (!row) {
+    return Response.json({ error: 'not found' }, { status: 404 })
+  }
+
+  if (row.image_url) {
+    await context.env.IMAGES.delete(row.image_url)
+  }
+
+  await context.env.DB.prepare(
+    'DELETE FROM clothes WHERE id = ? AND owner_email = ?'
+  )
+    .bind(id, ownerEmail)
+    .run()
+
+  return Response.json({ ok: true })
+}

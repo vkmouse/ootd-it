@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 import {
   iconShirt,
   iconPants,
   iconShoes,
   iconJacket,
   iconAccessories,
-  iconClothesPlaceholder,
+  iconUpload,
 } from '@/utils/icons'
 
 const router = useRouter()
@@ -75,6 +76,13 @@ const existingImageUrl = ref<string | null>(null)
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
 
+// 隱藏的 file input ref
+const fileInputRef = ref<HTMLInputElement | null>(null)
+
+function openFilePicker() {
+  fileInputRef.value?.click()
+}
+
 // touch 起始 Y 座標
 const yearTouchStartY = ref(0)
 const monthTouchStartY = ref(0)
@@ -92,6 +100,9 @@ function onCategorySelect(value: string) {
 // 切換顏色色票（再次點選同色則清空）
 function onColorSelect(name: string) {
   form.value.color = form.value.color === name ? '' : name
+  if (form.value.color && !form.value.color_note) {
+    form.value.color_note = form.value.color
+  }
 }
 
 // 年份滾輪
@@ -244,6 +255,15 @@ async function submit() {
 
   router.back()
 }
+
+// 刪除衣物
+const showDeleteModal = ref(false)
+
+async function deleteClothes() {
+  showDeleteModal.value = false
+  await fetch(`/api/clothes/${clothesId.value}`, { method: 'DELETE' })
+  router.back()
+}
 </script>
 
 <template>
@@ -251,8 +271,8 @@ async function submit() {
     <form class="clothes-form" @submit.prevent="submit">
       <!-- 圖片 -->
       <div class="clothes-form__field">
-        <label class="clothes-form__label" for="image">圖片</label>
-        <div class="clothes-form__image-preview">
+        <label class="clothes-form__label">圖片</label>
+        <div class="clothes-form__image-preview" @click="openFilePicker">
           <img
             v-if="previewUrl"
             :src="previewUrl"
@@ -266,10 +286,10 @@ async function submit() {
             alt="目前圖片"
           />
           <div v-else class="clothes-form__preview-placeholder">
-            <span v-html="iconClothesPlaceholder" class="clothes-form__placeholder-icon" />
+            <span v-html="iconUpload" class="clothes-form__placeholder-icon" />
           </div>
         </div>
-        <input id="image" type="file" accept="image/*" class="clothes-form__input" @change="onFileChange" />
+        <input ref="fileInputRef" type="file" accept="image/*" style="display: none" @change="onFileChange" />
       </div>
 
       <!-- 名稱 -->
@@ -358,8 +378,19 @@ async function submit() {
       </div>
 
       <button class="clothes-form__submit" type="submit">儲存</button>
+      <button v-if="isEdit" type="button" class="clothes-form__delete" @click="showDeleteModal = true">刪除衣物</button>
     </form>
   </div>
+
+  <ConfirmModal
+    v-if="showDeleteModal"
+    title="刪除衣物"
+    message="此操作不可復原，衣物資料與圖片將一併刪除。"
+    confirmLabel="刪除"
+    cancelLabel="取消"
+    @confirm="deleteClothes"
+    @cancel="showDeleteModal = false"
+  />
 </template>
 
 <style scoped>
@@ -453,6 +484,17 @@ async function submit() {
   font-weight: 600;
   cursor: pointer;
   margin-top: var(--spacing-sm);
+}
+
+.clothes-form__delete {
+  background-color: var(--color-bg-sub);
+  color: var(--color-text-muted);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
 }
 
 /* 類型選擇器 */

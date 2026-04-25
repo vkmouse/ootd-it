@@ -10,5 +10,6 @@ import iconShoes from "../assets/icons/icon-shoes.svg?raw"
 import iconJacket from "../assets/icons/icon-jacket.svg?raw"
 import iconAccessories from "../assets/icons/icon-accessories.svg?raw"
 import iconClothesPlaceholder from "../assets/icons/icon-clothes-placeholder.svg?raw"
+import iconUpload from "../assets/icons/icon-upload.svg?raw"
 
-export { iconSun, iconMoon, iconShirt, iconShirtFilled, iconWardrobe, iconWardrobeFilled, iconArrowLeft, iconPants, iconShoes, iconJacket, iconAccessories, iconClothesPlaceholder }
+export { iconSun, iconMoon, iconShirt, iconShirtFilled, iconWardrobe, iconWardrobeFilled, iconArrowLeft, iconPants, iconShoes, iconJacket, iconAccessories, iconClothesPlaceholder, iconUpload }
