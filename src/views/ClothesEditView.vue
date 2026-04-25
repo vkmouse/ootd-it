@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import ConfirmModal from '@/components/ConfirmModal.vue'
+import WheelPicker from '@/components/WheelPicker.vue'
 import {
   iconShirt,
   iconPants,
@@ -22,10 +23,16 @@ const isEdit = computed(() => !!clothesId.value)
 const SIZE_OPTIONS: Record<string, string[]> = {
   tops:        ['S', 'M', 'L', 'XL', 'XXL'],
   outerwear:   ['S', 'M', 'L', 'XL', 'XXL'],
-  bottoms:     ['28', '29', '30', '31', '32', '33', '34', '36', '38'],
   shoes:       ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '12'],
   accessories: [],
 }
+
+// 褲子尺寸：通用尺寸 vs 褲子尺寸（依制式切換）
+const BOTTOMS_ALPHA   = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+const BOTTOMS_NUMERIC = ['26', '27', '28', '29', '30', '31', '32', '33', '34', '36', '38']
+
+// 褲子制式：'alpha' = 通用尺寸，'numeric' = 褲子尺寸
+const bottomsSizeType = ref<'alpha' | 'numeric'>('alpha')
 
 // 類型選項（含 SVG icon）
 const CATEGORIES = [
@@ -83,18 +90,30 @@ function openFilePicker() {
   fileInputRef.value?.click()
 }
 
-// touch 起始 Y 座標
-const yearTouchStartY = ref(0)
-const monthTouchStartY = ref(0)
+// touch 起始 Y 座標（由 WheelPicker 元件內部管理，此處已移除）
+
+// 年份與月份 WheelPicker 的選項
+const yearItems = computed(() => {
+  const result: string[] = []
+  for (let y = 2000; y <= MAX_YEAR; y++) result.push(String(y))
+  return result
+})
+const monthItems = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
 // 根據選擇的類型決定尺寸選項
-const sizeOptions = computed(() => SIZE_OPTIONS[form.value.category] ?? [])
+const sizeOptions = computed(() => {
+  if (form.value.category === 'bottoms') {
+    return bottomsSizeType.value === 'numeric' ? BOTTOMS_NUMERIC : BOTTOMS_ALPHA
+  }
+  return SIZE_OPTIONS[form.value.category] ?? []
+})
 const showSize = computed(() => form.value.category !== '' && form.value.category !== 'accessories')
 
 // 切換類型
 function onCategorySelect(value: string) {
   form.value.category = value
   form.value.size = ''
+  bottomsSizeType.value = 'alpha'
 }
 
 // 切換顏色色票（再次點選同色則清空）
@@ -102,62 +121,6 @@ function onColorSelect(name: string) {
   form.value.color = form.value.color === name ? '' : name
   if (form.value.color && !form.value.color_note) {
     form.value.color_note = form.value.color
-  }
-}
-
-// 年份滾輪
-function handleYearWheel(e: WheelEvent) {
-  const current = selectedYear.value ?? new Date().getFullYear()
-  selectedYear.value = e.deltaY < 0
-    ? Math.min(current + 1, MAX_YEAR)
-    : Math.max(current - 1, 2000)
-}
-
-// 月份滾輪
-function handleMonthWheel(e: WheelEvent) {
-  const current = selectedMonth.value ?? new Date().getMonth() + 1
-  selectedMonth.value = e.deltaY < 0
-    ? Math.min(current + 1, 12)
-    : Math.max(current - 1, 1)
-}
-
-// 年份 touch 事件
-function handleYearTouchStart(e: TouchEvent) {
-  if (e.touches.length > 0) {
-    yearTouchStartY.value = e.touches[0]!.clientY
-  }
-}
-
-function handleYearTouchMove(e: TouchEvent) {
-  if (e.touches.length > 0) {
-    const delta = yearTouchStartY.value - e.touches[0]!.clientY
-    if (Math.abs(delta) > 10) {
-      const current = selectedYear.value ?? new Date().getFullYear()
-      selectedYear.value = delta > 0
-        ? Math.min(current + 1, MAX_YEAR)
-        : Math.max(current - 1, 2000)
-      yearTouchStartY.value = e.touches[0]!.clientY
-    }
-  }
-}
-
-// 月份 touch 事件
-function handleMonthTouchStart(e: TouchEvent) {
-  if (e.touches.length > 0) {
-    monthTouchStartY.value = e.touches[0]!.clientY
-  }
-}
-
-function handleMonthTouchMove(e: TouchEvent) {
-  if (e.touches.length > 0) {
-    const delta = monthTouchStartY.value - e.touches[0]!.clientY
-    if (Math.abs(delta) > 10) {
-      const current = selectedMonth.value ?? new Date().getMonth() + 1
-      selectedMonth.value = delta > 0
-        ? Math.min(current + 1, 12)
-        : Math.max(current - 1, 1)
-      monthTouchStartY.value = e.touches[0]!.clientY
-    }
   }
 }
 
@@ -203,6 +166,10 @@ onMounted(async () => {
   if (data.acquired_date && data.acquired_date.length === 6) {
     selectedYear.value = parseInt(data.acquired_date.slice(0, 4), 10)
     selectedMonth.value = parseInt(data.acquired_date.slice(4, 6), 10)
+  }
+  // 褲子：依 size 值是否為純數字自動切換制式
+  if (data.category === 'bottoms' && data.size && /^\d+$/.test(data.size)) {
+    bottomsSizeType.value = 'numeric'
   }
 })
 
@@ -318,11 +285,28 @@ async function deleteClothes() {
 
       <!-- 尺寸（依類型顯示） -->
       <div v-if="showSize" class="clothes-form__field">
-        <label class="clothes-form__label" for="size">尺寸</label>
-        <select id="size" v-model="form.size" class="clothes-form__input">
-          <option value="">請選擇</option>
-          <option v-for="s in sizeOptions" :key="s" :value="s">{{ s }}</option>
-        </select>
+        <label class="clothes-form__label">尺寸</label>
+        <!-- 褲子制式切換 toggle -->
+        <div v-if="form.category === 'bottoms'" class="size-type-toggle">
+          <button
+            type="button"
+            class="size-type-btn"
+            :class="{ 'size-type-btn--active': bottomsSizeType === 'alpha' }"
+            @click="() => { bottomsSizeType = 'alpha'; form.size = '' }"
+          >通用</button>
+          <button
+            type="button"
+            class="size-type-btn"
+            :class="{ 'size-type-btn--active': bottomsSizeType === 'numeric' }"
+            @click="() => { bottomsSizeType = 'numeric'; form.size = '' }"
+          >褲子尺寸</button>
+        </div>
+        <WheelPicker
+          :items="sizeOptions"
+          :modelValue="form.size"
+          placeholder="請選擇"
+          @update:modelValue="v => { form.size = v }"
+        />
       </div>
 
       <!-- 顏色 -->
@@ -352,22 +336,18 @@ async function deleteClothes() {
       <div class="clothes-form__field">
         <label class="clothes-form__label">入手時間</label>
         <div class="date-picker">
-          <div
-            class="date-col"
-            @wheel.prevent="handleYearWheel"
-            @touchstart="handleYearTouchStart"
-            @touchmove.prevent="handleYearTouchMove"
-          >
-            <span class="date-col__value">{{ selectedYear ?? '年' }}</span>
-          </div>
-          <div
-            class="date-col"
-            @wheel.prevent="handleMonthWheel"
-            @touchstart="handleMonthTouchStart"
-            @touchmove.prevent="handleMonthTouchMove"
-          >
-            <span class="date-col__value">{{ selectedMonth ? String(selectedMonth).padStart(2, '0') : '月' }}</span>
-          </div>
+          <WheelPicker
+            :items="yearItems"
+            :modelValue="selectedYear ? String(selectedYear) : ''"
+            placeholder="年"
+            @update:modelValue="v => { selectedYear = parseInt(v, 10) }"
+          />
+          <WheelPicker
+            :items="monthItems"
+            :modelValue="selectedMonth ? String(selectedMonth).padStart(2, '0') : ''"
+            placeholder="月"
+            @update:modelValue="v => { selectedMonth = parseInt(v, 10) }"
+          />
         </div>
       </div>
 
@@ -561,29 +541,37 @@ async function deleteClothes() {
   outline-color: var(--color-primary);
 }
 
-/* 日期滾輪選擇器 */
+/* 日期選擇器（兩個 WheelPicker 並排） */
 .date-picker {
   display: flex;
   gap: var(--spacing-sm);
 }
 
-.date-col {
+.date-picker > * {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 56px;
-  background-color: var(--color-bg-sub);
-  border-radius: var(--radius-xl);
-  cursor: ns-resize;
-  user-select: none;
-  touch-action: none;
 }
 
-.date-col__value {
+/* 褲子尺寸制式切換 toggle */
+.size-type-toggle {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.size-type-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-bg-sub);
+  color: var(--color-text-muted);
+  border: none;
+  border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.size-type-btn--active {
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  font-weight: 600;
 }
 </style>
 
