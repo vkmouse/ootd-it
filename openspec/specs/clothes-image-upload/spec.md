@@ -37,3 +37,23 @@ Worker SHALL 提供 `GET /api/clothes/:id/image` 端點，從 R2 讀取圖片二
 #### Scenario: 本地上傳圖片
 - **WHEN** 在 `wrangler dev` 環境下上傳圖片
 - **THEN** 圖片 SHALL 儲存於 `.wrangler/state/v3/r2/` 本地目錄，行為與線上 R2 一致
+
+---
+
+### Requirement: 刪除衣物 API
+Worker SHALL 提供 `DELETE /api/clothes/:id` 端點，驗證 owner 後先從 R2 刪除圖片（若存在），再從 DB 刪除衣物記錄，回傳 `{ ok: true }`。
+
+#### Scenario: 刪除存在的衣物（含圖片）
+- **WHEN** `DELETE /api/clothes/:id` 被呼叫，且衣物存在、`image_url` 非 null
+- **THEN** Worker SHALL 從 R2 刪除 `clothes/{id}/photo` object
+- **THEN** Worker SHALL 從 DB 刪除該衣物記錄
+- **THEN** Worker SHALL 回傳 `{ ok: true }`
+
+#### Scenario: 刪除存在的衣物（無圖片）
+- **WHEN** `DELETE /api/clothes/:id` 被呼叫，且衣物存在、`image_url` 為 null
+- **THEN** Worker SHALL 直接從 DB 刪除該衣物記錄（跳過 R2 操作）
+- **THEN** Worker SHALL 回傳 `{ ok: true }`
+
+#### Scenario: 衣物不存在或不屬於該使用者
+- **WHEN** `DELETE /api/clothes/:id` 被呼叫，但該 id 不存在或不屬於當前 owner
+- **THEN** Worker SHALL 回傳 HTTP 404 `{ error: 'not found' }`
