@@ -1,14 +1,11 @@
 // GET /api/clothes/:id — 取得單一衣物
 // PATCH /api/clothes/:id — 更新衣物欄位（不包含圖片）
-
-function getOwnerEmail(request: Request): string {
-  return request.headers.get('cf-access-authenticated-user-email') ?? 'demo@example.com'
-}
+import type { AuthContext } from '../../types'
 
 export async function onRequestGet(
-  context: EventContext<Env, 'id', unknown>
+  context: EventContext<Env, 'id', AuthContext>
 ): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+  const ownerEmail = context.data.email
   const id = context.params.id
 
   const row = await context.env.DB.prepare(
@@ -25,9 +22,9 @@ export async function onRequestGet(
 }
 
 export async function onRequestPatch(
-  context: EventContext<Env, 'id', unknown>
+  context: EventContext<Env, 'id', AuthContext>
 ): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+  const ownerEmail = context.data.email
   const id = context.params.id
 
   const body = await context.request.json<{
@@ -67,9 +64,9 @@ export async function onRequestPatch(
 }
 
 export async function onRequestDelete(
-  context: EventContext<Env, 'id', unknown>
+  context: EventContext<Env, 'id', AuthContext>
 ): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+  const ownerEmail = context.data.email
   const id = context.params.id
 
   const row = await context.env.DB.prepare(

@@ -1,14 +1,11 @@
 // POST /api/clothes/:id/image — 上傳衣物圖片至 R2
 // GET  /api/clothes/:id/image — 從 R2 讀取圖片二進位
-
-function getOwnerEmail(request: Request): string {
-  return request.headers.get('cf-access-authenticated-user-email') ?? 'demo@example.com'
-}
+import type { AuthContext } from '../../../types'
 
 export async function onRequestPost(
-  context: EventContext<Env, 'id', unknown>
+  context: EventContext<Env, 'id', AuthContext>
 ): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+  const ownerEmail = context.data.email
   const id = context.params.id
 
   // 確認衣物屬於該使用者
@@ -44,9 +41,9 @@ export async function onRequestPost(
 }
 
 export async function onRequestGet(
-  context: EventContext<Env, 'id', unknown>
+  context: EventContext<Env, 'id', AuthContext>
 ): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+  const ownerEmail = context.data.email
   const id = context.params.id
 
   // 確認衣物屬於該使用者

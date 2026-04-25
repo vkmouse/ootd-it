@@ -1,13 +1,9 @@
 // GET /api/clothes — 列出該使用者的所有衣物（依建立時間倒序）
 // POST /api/clothes — 新增一件衣物
-// 驗證：從 Cloudflare Access header 取得使用者 email，本地開發 fallback demo@example.com
+import type { AuthContext } from '../types'
 
-function getOwnerEmail(request: Request): string {
-  return request.headers.get('cf-access-authenticated-user-email') ?? 'demo@example.com'
-}
-
-export async function onRequestGet(context: EventContext<Env, string, unknown>): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+export async function onRequestGet(context: EventContext<Env, string, AuthContext>): Promise<Response> {
+  const ownerEmail = context.data.email
 
   const { results } = await context.env.DB.prepare(
     'SELECT * FROM clothes WHERE owner_email = ? ORDER BY created_at DESC'
@@ -18,8 +14,8 @@ export async function onRequestGet(context: EventContext<Env, string, unknown>):
   return Response.json(results)
 }
 
-export async function onRequestPost(context: EventContext<Env, string, unknown>): Promise<Response> {
-  const ownerEmail = getOwnerEmail(context.request)
+export async function onRequestPost(context: EventContext<Env, string, AuthContext>): Promise<Response> {
+  const ownerEmail = context.data.email
 
   const body = await context.request.json<{
     name: string
