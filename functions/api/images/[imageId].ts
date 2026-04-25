@@ -4,8 +4,9 @@ import type { AuthContext } from '../../types'
 export async function onRequestGet(
   context: EventContext<Env, 'imageId', AuthContext>
 ): Promise<Response> {
+  const ownerEmail = context.data.email
   const imageId = context.params.imageId
-  const key = `clothes/${imageId}/photo`
+  const key = `clothes/${ownerEmail}/${imageId}`
 
   const object = await context.env.IMAGES.get(key)
 

@@ -30,13 +30,13 @@ export async function onRequestPost(
   if (row.image_url) {
     const oldImageId = row.image_url.split('/').pop()
     if (oldImageId) {
-      await context.env.IMAGES.delete(`clothes/${oldImageId}/photo`)
+      await context.env.IMAGES.delete(`clothes/${ownerEmail}/${oldImageId}`)
     }
   }
 
   // 產生新 imageId，上傳至 R2
   const imageId = crypto.randomUUID()
-  const key = `clothes/${imageId}/photo`
+  const key = `clothes/${ownerEmail}/${imageId}`
   await context.env.IMAGES.put(key, file.stream(), {
     httpMetadata: { contentType: file.type || 'application/octet-stream' },
   })
