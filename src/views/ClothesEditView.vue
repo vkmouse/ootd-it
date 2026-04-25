@@ -281,7 +281,7 @@ async function deleteClothes() {
           />
           <img
             v-else-if="existingImageUrl"
-            :src="`/api/clothes/${clothesId}/image`"
+            :src="existingImageUrl"
             class="clothes-form__preview-img"
             alt="目前圖片"
           />

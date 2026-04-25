@@ -80,7 +80,10 @@ export async function onRequestDelete(
   }
 
   if (row.image_url) {
-    await context.env.IMAGES.delete(row.image_url)
+    const imageId = row.image_url.split('/').pop()
+    if (imageId) {
+      await context.env.IMAGES.delete(`clothes/${imageId}/photo`)
+    }
   }
 
   await context.env.DB.prepare(

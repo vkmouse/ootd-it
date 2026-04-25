@@ -48,7 +48,7 @@ function goToEdit() {
     >
       <img
         v-if="imageUrl"
-        :src="`/api/clothes/${id}/image`"
+        :src="imageUrl"
         class="clothes-card__photo"
         alt=""
       />
