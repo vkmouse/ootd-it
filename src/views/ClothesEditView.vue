@@ -333,7 +333,7 @@ async function deleteClothes() {
           v-model="form.color_note"
           class="clothes-form__input"
           type="text"
-          placeholder="備註（例：#8A8A8A、帶藍色調）"
+          placeholder="備註"
         />
       </div>
 
@@ -355,7 +355,7 @@ async function deleteClothes() {
         <label class="clothes-form__label" for="acquired_price">入手價格</label>
         <NumPad
           :modelValue="form.acquired_price"
-          placeholder="例：990"
+          placeholder=""
           @update:modelValue="v => { form.acquired_price = v }"
         />
       </div>

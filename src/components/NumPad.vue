@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick } from 'vue'
+import { iconXCircle, iconBackspace, iconCheck } from '@/utils/icons'
 
 const props = withDefaults(defineProps<{
   modelValue: string
@@ -15,8 +16,19 @@ const emit = defineEmits<{
 const isActive = ref(false)
 const rootEl = ref<HTMLElement | null>(null)
 
-function open() {
+const formattedDisplay = computed(() => {
+  if (!props.modelValue) return ''
+  const parts = props.modelValue.split('.')
+  const intPart = parts[0] ?? ''
+  const decPart = parts[1]
+  const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return decPart !== undefined ? `${formatted}.${decPart}` : formatted
+})
+
+async function open() {
   isActive.value = true
+  await nextTick()
+  rootEl.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
 }
 
 function close() {
@@ -48,20 +60,6 @@ function pressClear() {
 function pressConfirm() {
   close()
 }
-
-function onOutsidePointerDown(e: PointerEvent) {
-  if (isActive.value && rootEl.value && !rootEl.value.contains(e.target as Node)) {
-    close()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('pointerdown', onOutsidePointerDown)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('pointerdown', onOutsidePointerDown)
-})
 </script>
 
 <template>
@@ -79,14 +77,14 @@ onUnmounted(() => {
       <span
         class="numpad__overlay-text"
         :class="{ 'numpad__overlay-text--placeholder': modelValue === '' }"
-      >{{ modelValue !== '' ? modelValue : placeholder }}</span>
+      >{{ modelValue !== '' ? formattedDisplay : placeholder }}</span>
     </div>
 
     <!-- 展開後的主體 -->
     <div v-show="isActive" class="numpad__body">
       <!-- 顯示列 -->
       <div class="numpad__display">
-        <span class="numpad__display-value">{{ modelValue !== '' ? modelValue : placeholder }}</span>
+        <span class="numpad__display-value">{{ modelValue !== '' ? formattedDisplay : placeholder }}</span>
       </div>
 
       <!-- 按鍵區（4 欄 Grid） -->
@@ -94,18 +92,18 @@ onUnmounted(() => {
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('7')">7</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('8')">8</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('9')">9</button>
-        <button type="button" class="numpad__key numpad__key--fn" @pointerdown.stop="pressClear">刪</button>
+        <button type="button" class="numpad__key numpad__key--fn" @pointerdown.stop="pressClear"><span class="numpad__key-icon" v-html="iconXCircle" /></button>
 
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('4')">4</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('5')">5</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('6')">6</button>
-        <button type="button" class="numpad__key numpad__key--fn" @pointerdown.stop="pressBackspace">退</button>
+        <button type="button" class="numpad__key numpad__key--fn" @pointerdown.stop="pressBackspace"><span class="numpad__key-icon" v-html="iconBackspace" /></button>
 
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('1')">1</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('2')">2</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('3')">3</button>
         <!-- 確定：跨兩列 -->
-        <button type="button" class="numpad__key numpad__key--confirm" @pointerdown.stop="pressConfirm">確</button>
+        <button type="button" class="numpad__key numpad__key--confirm" @pointerdown.stop="pressConfirm"><span class="numpad__key-icon" v-html="iconCheck" /></button>
 
         <button type="button" class="numpad__key" @pointerdown.stop="pressDouble">00</button>
         <button type="button" class="numpad__key" @pointerdown.stop="pressDigit('0')">0</button>
@@ -146,14 +144,28 @@ onUnmounted(() => {
 
 .numpad__overlay-text {
   font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   color: var(--color-text-main);
 }
 
 .numpad__overlay-text--placeholder {
   font-weight: 400;
   color: var(--color-text-muted);
+}
+
+.numpad__key-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+.numpad__key-icon :deep(svg) {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.75;
 }
 
 /* 展開主體 */
@@ -175,8 +187,8 @@ onUnmounted(() => {
 
 .numpad__display-value {
   font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   color: var(--color-text-main);
   letter-spacing: 0.04em;
 }

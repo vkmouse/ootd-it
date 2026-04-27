@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 
 const props = withDefaults(defineProps<{
   items: string[]
@@ -62,6 +62,7 @@ function onPointerUp(e: PointerEvent) {
   if (totalDisplacement < 28 && !isActive.value) {
     syncIndex()
     isActive.value = true
+    nextTick(() => rootEl.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }))
   }
   currentPointerId = -1
 }
@@ -219,8 +220,8 @@ const overlayText = computed(() => props.modelValue !== '' ? props.modelValue : 
 
 .wheel-picker__overlay-text {
   font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   color: var(--color-text-main);
 }
 

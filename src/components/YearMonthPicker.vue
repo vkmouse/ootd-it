@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 
 const props = withDefaults(defineProps<{
   yearItems: string[]
@@ -83,6 +83,7 @@ function onPointerUp(e: PointerEvent) {
   if (totalDisplacement < 28 && !isActive.value) {
     syncIndexes()
     isActive.value = true
+    nextTick(() => rootEl.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }))
   }
   currentPointerId = -1
 }
@@ -124,8 +125,8 @@ function slotStyle(offset: number) {
 const yearSlots = computed(() => computedSlots(localYearIndex.value, props.yearItems))
 const monthSlots = computed(() => computedSlots(localMonthIndex.value, props.monthItems))
 
-const overlayYearText = computed(() => props.yearValue !== '' ? props.yearValue : props.yearPlaceholder)
-const overlayMonthText = computed(() => props.monthValue !== '' ? props.monthValue : props.monthPlaceholder)
+const overlayYearText = computed(() => props.yearValue !== '' ? `${props.yearValue}年` : props.yearPlaceholder)
+const overlayMonthText = computed(() => props.monthValue !== '' ? `${props.monthValue}月` : props.monthPlaceholder)
 const yearIsPlaceholder = computed(() => props.yearValue === '')
 const monthIsPlaceholder = computed(() => props.monthValue === '')
 </script>
@@ -172,7 +173,6 @@ const monthIsPlaceholder = computed(() => props.monthValue === '')
         class="ym-picker__overlay-text"
         :class="{ 'ym-picker__overlay-text--placeholder': yearIsPlaceholder }"
       >{{ overlayYearText }}</span>
-      <span class="ym-picker__overlay-sep">   </span>
       <span
         class="ym-picker__overlay-text"
         :class="{ 'ym-picker__overlay-text--placeholder': monthIsPlaceholder }"
@@ -251,7 +251,8 @@ const monthIsPlaceholder = computed(() => props.monthValue === '')
   inset: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: var(--spacing-md);
   z-index: 2;
   pointer-events: none;
   gap: 0;
@@ -261,19 +262,13 @@ const monthIsPlaceholder = computed(() => props.monthValue === '')
 
 .ym-picker__overlay-text {
   font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   color: var(--color-text-main);
 }
 
 .ym-picker__overlay-text--placeholder {
   font-weight: 400;
   color: var(--color-text-muted);
-}
-
-.ym-picker__overlay-sep {
-  font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  white-space: pre;
 }
 </style>

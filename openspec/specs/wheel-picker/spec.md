@@ -78,3 +78,25 @@ active 狀態下，WheelPicker SHALL 使用 CSS 3D `perspective` + `rotateX` 呈
 #### Scenario: 空值首次滑動自動選第一個
 - **WHEN** `modelValue` 為空字串，使用者開始觸碰或滾動 WheelPicker
 - **THEN** WheelPicker SHALL 立即 emit `items[0]` 作為初始選中值，並展開 active 狀態
+
+---
+
+### Requirement: WheelPicker 展開自動滾動
+WheelPicker 展開（進入 active 狀態）時，SHALL 自動將自身滾動至可視區域。
+
+#### Scenario: 展開後元素滾入視窗
+- **WHEN** 使用者點擊 WheelPicker 觸發展開
+- **THEN** WheelPicker SHALL 自動 scrollIntoView（block: nearest）
+
+---
+
+### Requirement: WheelPicker overlay 字型與 input 一致
+WheelPicker 收合 overlay 的文字 SHALL 採用與 `clothes-form__input` 相同的字型規格：`font-size: var(--font-size-base)`、有值時 `font-weight: 500`、placeholder 時 `font-weight: 400`。
+
+#### Scenario: 有值時字型
+- **WHEN** `modelValue` 非空，WheelPicker 為 inactive
+- **THEN** overlay 文字 SHALL 以 `font-size-base`、`font-weight: 500` 顯示
+
+#### Scenario: placeholder 字型
+- **WHEN** `modelValue` 為空，WheelPicker 為 inactive
+- **THEN** overlay 文字 SHALL 以 `font-size-base`、`font-weight: 400`、`--color-text-muted` 顯示

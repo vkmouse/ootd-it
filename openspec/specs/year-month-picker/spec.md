@@ -4,8 +4,8 @@
 YearMonthPicker 元件 SHALL 在單一容器內顯示年份與月份兩個獨立的滾輪（drum），共享同一個 `isActive` 狀態（展開/收合）。容器 SHALL 以 `--color-bg-sub` 為統一背景色，不加 gap、不加 border、不加 shadow，視覺上呈現為一個整體。
 
 #### Scenario: 收合時顯示當前年月
-- **WHEN** 元件為 inactive 狀態
-- **THEN** 容器 SHALL 顯示為 44px 高，左半部顯示當前年份值，右半部顯示當前月份值（如 `2024   03`）
+- **WHEN** 元件為 inactive 狀態且年份與月份皆已選取
+- **THEN** overlay SHALL 靠左顯示 `{年份}年{月份}月`（如 `2024年10月`），`padding-left: var(--spacing-md)`
 
 #### Scenario: 年或月未選取時顯示 placeholder
 - **WHEN** 元件為 inactive 狀態且年份或月份尚未選取
@@ -52,3 +52,25 @@ YearMonthPicker SHALL 使用與 WheelPicker 相同的 3D perspective 效果，ce
 #### Scenario: indicator bar 橫跨整行
 - **WHEN** 元件為 active 狀態
 - **THEN** 中心 indicator bar SHALL 以 `--color-secondary` 背景色橫跨整個容器寬度（包含年與月區域），不使用 border 或 shadow
+
+---
+
+### Requirement: YearMonthPicker 展開自動滾動
+YearMonthPicker 展開（進入 active 狀態）時，SHALL 自動將自身滾動至可視區域。
+
+#### Scenario: 展開後元素滾入視窗
+- **WHEN** 使用者點擊 YearMonthPicker 觸發展開
+- **THEN** 元件 SHALL 自動 scrollIntoView（block: nearest）
+
+---
+
+### Requirement: YearMonthPicker overlay 字型與 input 一致
+YearMonthPicker 收合 overlay 的文字 SHALL 採用與 `clothes-form__input` 相同的字型規格：`font-size: var(--font-size-base)`、有值時 `font-weight: 500`、placeholder 時 `font-weight: 400`。
+
+#### Scenario: 有值時字型
+- **WHEN** 年份或月份已選取，元件為 inactive
+- **THEN** 已選取部分 SHALL 以 `font-size-base`、`font-weight: 500` 顯示
+
+#### Scenario: placeholder 字型
+- **WHEN** 年份或月份未選取，元件為 inactive
+- **THEN** 未選取部分 SHALL 以 `font-size-base`、`font-weight: 400`、`--color-text-muted` 顯示
