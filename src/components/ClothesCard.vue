@@ -67,7 +67,7 @@ function goToEdit() {
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-sub);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   cursor: pointer;
 }
@@ -76,7 +76,7 @@ function goToEdit() {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   flex-shrink: 0;
 }
 

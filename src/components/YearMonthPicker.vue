@@ -63,6 +63,7 @@ function onPointerDown(e: PointerEvent) {
 }
 
 function onPointerMove(e: PointerEvent) {
+  if (!isActive.value) return
   if (e.pointerId !== currentPointerId) return
   const delta = lastY - e.clientY
   lastY = e.clientY
@@ -254,6 +255,8 @@ const monthIsPlaceholder = computed(() => props.monthValue === '')
   z-index: 2;
   pointer-events: none;
   gap: 0;
+  background-color: var(--color-bg-sub);
+  border-radius: var(--radius-xl);
 }
 
 .ym-picker__overlay-text {

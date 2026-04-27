@@ -44,6 +44,7 @@ function onPointerDown(e: PointerEvent) {
 }
 
 function onPointerMove(e: PointerEvent) {
+  if (!isActive.value) return
   if (e.pointerId !== currentPointerId) return
   const delta = lastY - e.clientY
   lastY = e.clientY
@@ -212,6 +213,8 @@ const overlayText = computed(() => props.modelValue !== '' ? props.modelValue : 
   justify-content: center;
   z-index: 2;
   pointer-events: none;
+  background-color: var(--color-bg-sub);
+  border-radius: var(--radius-xl);
 }
 
 .wheel-picker__overlay-text {

@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ClothesCard from '../components/ClothesCard.vue'
+import { iconPlus } from '@/utils/icons'
 
 interface ClothesItem {
   id: string
@@ -43,7 +44,7 @@ onMounted(async () => {
 
     <!-- 新增按鈕 -->
     <button class="wardrobe__add-btn" @click="router.push('/wardrobe/new')" aria-label="新增衣物">
-      ＋
+      <span class="wardrobe__add-icon" v-html="iconPlus" />
     </button>
   </div>
 </template>
@@ -76,6 +77,7 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-sm);
+  padding: 0 var(--spacing-sm) var(--spacing-sm);
 }
 
 /* 浮動新增按鈕 */
@@ -88,12 +90,23 @@ onMounted(async () => {
   border-radius: 50%;
   background-color: var(--color-primary);
   color: #fff;
-  font-size: var(--font-size-xl);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
+}
+
+.wardrobe__add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.wardrobe__add-icon :deep(svg) {
+  width: 24px;
+  height: 24px;
 }
 </style>

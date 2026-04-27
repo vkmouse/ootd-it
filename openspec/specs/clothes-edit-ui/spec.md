@@ -18,14 +18,14 @@
 ---
 
 ### Requirement: 16 色票選擇器
-衣物表單的顏色欄位 SHALL 以 16 個圓形固定色票橫排（可換行）呈現，使用者點選色票後 SHALL 以主色描邊標示選中狀態。
+衣物表單的顏色欄位 SHALL 以 16 個圓形固定色票以 **2 行 × 8 欄格狀（grid）排列**呈現，使用者點選色票後 SHALL 以主色描邊標示選中狀態。
 
 色票定義（名稱 → hex）：
 `黑 #1A1A1A`、`深灰 #4A4A4A`、`灰 #9E9E9E`、`淺灰 #CFCFCF`、`白 #F5F5F5`、`米 #F0EAD6`、`卡其 #C3B091`、`棕 #795548`、`深棕 #4E342E`、`深藍 #1A237E`、`藍 #1565C0`、`天藍 #64B5F6`、`墨綠 #1B5E20`、`紅 #C62828`、`粉 #F48FB1`、`紫 #7B1FA2`
 
-#### Scenario: 色票橫排顯示
+#### Scenario: 色票以 2×8 格狀顯示
 - **WHEN** 使用者進入衣物新增或編輯頁面
-- **THEN** 顏色區域 SHALL 顯示 16 個圓形色塊，以 `flex-wrap` 方式排列
+- **THEN** 顏色區域 SHALL 顯示 16 個圓形色塊，排列為 2 行、每行 8 個的格狀佈局（`grid-template-columns: repeat(8, 1fr)`）
 
 #### Scenario: 點選色票後標示
 - **WHEN** 使用者點擊某個色票
@@ -44,6 +44,11 @@
 ### Requirement: 顏色備註欄位
 顏色區域 SHALL 在色票下方提供一個文字輸入欄位，對應 `color_note` 欄位，供使用者記錄自由文字（如色碼、材質色感）。此欄位不作為搜尋條件。
 
+點選色票時，系統 SHALL 依下列規則決定是否更新 `color_note`：
+1. 若 `color_note` 為空，SHALL 自動填入所選色票名稱
+2. 若 `color_note` 目前值屬於任意色票名稱（即為系統自動填入的追蹤狀態），SHALL 覆蓋為新選色票名稱
+3. 若 `color_note` 為使用者自訂文字（不在色票名稱清單中），SHALL 保持不動
+
 #### Scenario: 顯示備註輸入欄
 - **WHEN** 使用者進入衣物新增或編輯頁面
 - **THEN** 顏色區域 SHALL 在色票下方顯示 placeholder 為「備註（例：#8A8A8A、帶藍色調）」的文字輸入欄位
@@ -51,6 +56,18 @@
 #### Scenario: 編輯模式預填備註
 - **WHEN** 使用者進入編輯模式且 `color_note` 有值
 - **THEN** 備註欄位 SHALL 顯示既有的 `color_note` 內容
+
+#### Scenario: 首次點選色票自動填入備註
+- **WHEN** 使用者點選色票且 `color_note` 目前為空
+- **THEN** `color_note` SHALL 自動設為所選色票名稱
+
+#### Scenario: 連續點選色票時備註追蹤更新
+- **WHEN** 使用者點選色票 A，備註自動設為 A；再點選色票 B，備註目前值等於 A（屬於色票名稱）
+- **THEN** `color_note` SHALL 更新為 B
+
+#### Scenario: 自訂備註不被色票覆蓋
+- **WHEN** 使用者已手動修改 `color_note` 為非色票名稱的文字，再點選任意色票
+- **THEN** `color_note` SHALL 保持使用者自訂的文字，不被覆蓋
 
 ---
 
@@ -76,11 +93,15 @@
 ---
 
 ### Requirement: 圖片上傳互動
-衣物編輯表單 SHALL 以點擊圖片預覽區（包含佔位符）的方式觸發圖片選取，隱藏原有的獨立 file input 欄位。佔位符 SHALL 顯示上傳 icon 暗示可點擊。選取後前端顯示本地預覽，送出表單時以 `multipart/form-data` 呼叫 `POST /api/clothes/:id/image`。
+衣物編輯表單 SHALL 以點擊圖片預覽區（包含佔位符）的方式觸發圖片選取，隱藏原有的獨立 file input 欄位。佔位符 SHALL 顯示上傳 icon 及文字說明以暗示可點擊。圖片預覽區比例 SHALL 為 **1:1（square）**。選取後前端顯示本地預覽，送出表單時以 `multipart/form-data` 呼叫 `POST /api/clothes/:id/image`。
 
 #### Scenario: 點擊圖片預覽區觸發選取
 - **WHEN** 使用者點擊圖片預覽區（包含佔位符）
 - **THEN** 系統 SHALL 觸發隱藏的 file input，開啟裝置圖片選取介面
+
+#### Scenario: 預覽區比例為 1:1
+- **WHEN** 使用者進入衣物新增或編輯頁面
+- **THEN** 圖片預覽區 SHALL 呈現 1:1 square 比例
 
 #### Scenario: 選取圖片後顯示本地預覽
 - **WHEN** 使用者選取圖片
@@ -101,20 +122,20 @@
 
 ---
 
-### Requirement: 選色票自動填入備註
-顏色備註欄位（`color_note`）SHALL 在使用者選擇色票時，若當前 `color_note` 為空，自動填入所選色票的名稱（如「黑」、「深灰」、「淺藍」）。若 `color_note` 已有內容則不覆蓋。
+### Requirement: 入手價格欄位
+入手價格欄位 SHALL 使用 `NumPad` 元件呈現，不使用原生 `<input type="number">`，確保操作過程中不彈出系統鍵盤。
 
-#### Scenario: 備註為空時自動填入
-- **WHEN** 使用者點擊某色票且 `color_note` 欄位目前為空
-- **THEN** `color_note` SHALL 自動填入該色票名稱
+#### Scenario: 入手價格顯示
+- **WHEN** 使用者進入衣物新增頁面
+- **THEN** 入手價格欄位 SHALL 以 NumPad 收合狀態呈現，placeholder 為「例：990」
 
-#### Scenario: 備註有內容時不覆蓋
-- **WHEN** 使用者點擊某色票且 `color_note` 欄位已有內容
-- **THEN** `color_note` SHALL 保持原有內容不變
+#### Scenario: 編輯模式預填價格
+- **WHEN** 使用者進入編輯模式且 `acquired_price` 有值
+- **THEN** NumPad SHALL 顯示既有的價格數值（字串形式）
 
-#### Scenario: 取消選取色票時不清除備註
-- **WHEN** 使用者點擊已選中的色票（取消選取）
-- **THEN** `color_note` SHALL 保持原有內容不變
+#### Scenario: 輸入並確認價格
+- **WHEN** 使用者展開 NumPad 並輸入數字後按確認
+- **THEN** `acquired_price` 字串值 SHALL 更新，NumPad 收合
 
 ---
 

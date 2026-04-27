@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import WheelPicker from '@/components/WheelPicker.vue'
 import YearMonthPicker from '@/components/YearMonthPicker.vue'
+import NumPad from '@/components/NumPad.vue'
 import {
   iconShirt,
   iconPants,
@@ -120,7 +121,9 @@ function onCategorySelect(value: string) {
 // 切換顏色色票（再次點選同色則清空）
 function onColorSelect(name: string) {
   form.value.color = form.value.color === name ? '' : name
-  if (form.value.color && !form.value.color_note) {
+  // 若 color_note 為空，或目前值屬於任意色票名稱（追蹤狀態），則跟著更新
+  const isTracking = !form.value.color_note || COLOR_SWATCHES.some(s => s.name === form.value.color_note)
+  if (form.value.color && isTracking) {
     form.value.color_note = form.value.color
   }
 }
@@ -255,6 +258,7 @@ async function deleteClothes() {
           />
           <div v-else class="clothes-form__preview-placeholder">
             <span v-html="iconUpload" class="clothes-form__placeholder-icon" />
+            <span class="clothes-form__placeholder-text">點擊上傳圖片</span>
           </div>
         </div>
         <input ref="fileInputRef" type="file" accept="image/*" style="display: none" @change="onFileChange" />
@@ -349,7 +353,11 @@ async function deleteClothes() {
       <!-- 入手價格 -->
       <div class="clothes-form__field">
         <label class="clothes-form__label" for="acquired_price">入手價格</label>
-        <input id="acquired_price" v-model="form.acquired_price" class="clothes-form__input" type="number" min="0" placeholder="例：990" />
+        <NumPad
+          :modelValue="form.acquired_price"
+          placeholder="例：990"
+          @update:modelValue="v => { form.acquired_price = v }"
+        />
       </div>
 
       <button class="clothes-form__submit" type="submit">儲存</button>
@@ -404,11 +412,12 @@ async function deleteClothes() {
   width: 100%;
   aspect-ratio: 1 / 1;
   background-color: var(--color-bg-sub);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .clothes-form__preview-img {
@@ -421,8 +430,10 @@ async function deleteClothes() {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-sm);
 }
 
 .clothes-form__placeholder-icon {
@@ -435,6 +446,13 @@ async function deleteClothes() {
 .clothes-form__placeholder-icon :deep(svg) {
   width: 100%;
   height: 100%;
+}
+
+.clothes-form__placeholder-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
 }
 
 .clothes-form__input {
@@ -453,21 +471,25 @@ async function deleteClothes() {
   background-color: var(--color-primary);
   color: #fff;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   padding: var(--spacing-md);
+  height: 52px;
+  font-family: var(--font-display);
   font-size: var(--font-size-base);
   font-weight: 600;
+  letter-spacing: 0.12em;
   cursor: pointer;
   margin-top: var(--spacing-sm);
 }
 
 .clothes-form__delete {
-  background-color: var(--color-bg-sub);
-  color: var(--color-text-muted);
+  background: none;
+  color: #C62828;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   padding: var(--spacing-md);
   font-size: var(--font-size-base);
+  font-family: var(--font-body);
   font-weight: 500;
   cursor: pointer;
 }
@@ -483,12 +505,14 @@ async function deleteClothes() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   padding: var(--spacing-sm) var(--spacing-xs);
+  min-height: 64px;
   background-color: var(--color-bg-sub);
   color: var(--color-text-muted);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   cursor: pointer;
 }
 
@@ -516,20 +540,21 @@ async function deleteClothes() {
 
 /* 色票選擇器 */
 .color-swatches {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
   gap: var(--spacing-sm);
   padding: var(--spacing-xs) 0;
 }
 
 .color-swatch {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   outline: 2px solid transparent;
   outline-offset: 2px;
+  justify-self: center;
 }
 
 .color-swatch--active {
@@ -549,7 +574,7 @@ async function deleteClothes() {
   background-color: var(--color-bg-sub);
   color: var(--color-text-muted);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   cursor: pointer;
