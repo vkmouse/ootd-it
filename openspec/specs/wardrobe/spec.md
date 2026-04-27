@@ -86,8 +86,8 @@
 衣橱列表中的每件衣物 SHALL 以直向圖片優先卡片呈現：圖片區占卡片上方（**寬高比 1:1**），名稱與類型標籤在圖片下方；無照片時顯示依類型區分的純色佔位符。卡片圓角 SHALL 使用 `--radius-xl`。
 
 #### Scenario: 圖片優先佈局
-- **WHEN** 衣物項目有圖片
-- **THEN** 圖片 SHALL 以 `1:1` 比例 `object-fit: cover` 顯示於卡片上方
+- **WHEN** 衣物項目有圖片（`image_url` 非 null）
+- **THEN** 圖片 SHALL 以 `1:1` 比例 `object-fit: cover` 顯示於卡片上方，`<img>` 的 `src` 直接使用 `image_url` 欄位值（格式：`/api/images/{imageId}`）
 
 #### Scenario: 無圖片顯示佔位符
 - **WHEN** 衣物項目沒有圖片
