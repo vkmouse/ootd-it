@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import WheelPicker from '@/components/WheelPicker.vue'
+import YearMonthPicker from '@/components/YearMonthPicker.vue'
 import {
   iconShirt,
   iconPants,
@@ -335,20 +336,14 @@ async function deleteClothes() {
       <!-- 入手時間 -->
       <div class="clothes-form__field">
         <label class="clothes-form__label">入手時間</label>
-        <div class="date-picker">
-          <WheelPicker
-            :items="yearItems"
-            :modelValue="selectedYear ? String(selectedYear) : ''"
-            placeholder="年"
-            @update:modelValue="v => { selectedYear = parseInt(v, 10) }"
-          />
-          <WheelPicker
-            :items="monthItems"
-            :modelValue="selectedMonth ? String(selectedMonth).padStart(2, '0') : ''"
-            placeholder="月"
-            @update:modelValue="v => { selectedMonth = parseInt(v, 10) }"
-          />
-        </div>
+        <YearMonthPicker
+          :yearItems="yearItems"
+          :monthItems="monthItems"
+          :yearValue="selectedYear ? String(selectedYear) : ''"
+          :monthValue="selectedMonth ? String(selectedMonth).padStart(2, '0') : ''"
+          @update:yearValue="v => { selectedYear = parseInt(v, 10) }"
+          @update:monthValue="v => { selectedMonth = parseInt(v, 10) }"
+        />
       </div>
 
       <!-- 入手價格 -->
@@ -459,7 +454,7 @@ async function deleteClothes() {
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md);
   font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
@@ -471,7 +466,7 @@ async function deleteClothes() {
   color: var(--color-text-muted);
   border: none;
   border-radius: var(--radius-md);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md);
   font-size: var(--font-size-base);
   font-weight: 500;
   cursor: pointer;
@@ -541,15 +536,7 @@ async function deleteClothes() {
   outline-color: var(--color-primary);
 }
 
-/* 日期選擇器（兩個 WheelPicker 並排） */
-.date-picker {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
-.date-picker > * {
-  flex: 1;
-}
+/* date-picker 已由 YearMonthPicker 元件取代，CSS 無需保留 */
 
 /* 褲子尺寸制式切換 toggle */
 .size-type-toggle {

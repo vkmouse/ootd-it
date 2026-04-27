@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const props = withDefaults(defineProps<{
   items: string[]
@@ -14,34 +14,17 @@ const emit = defineEmits<{
 }>()
 
 const isActive = ref(false)
-let deactivateTimer: ReturnType<typeof setTimeout> | null = null
-let touchStartY = 0
 const localIndex = ref(0)
+const rootEl = ref<HTMLElement | null>(null)
+
+let pointerStartY = 0
+let lastY = 0
+let scrollDelta = 0
+let currentPointerId = -1
 
 function syncIndex() {
   const idx = props.items.indexOf(props.modelValue)
   localIndex.value = idx >= 0 ? idx : 0
-}
-
-function activate() {
-  if (deactivateTimer) {
-    clearTimeout(deactivateTimer)
-    deactivateTimer = null
-  }
-  if (!isActive.value) {
-    syncIndex()
-    if (props.modelValue === '' && props.items.length > 0) {
-      emit('update:modelValue', props.items[0]!)
-    }
-    isActive.value = true
-  }
-}
-
-function scheduleDeactivate() {
-  if (deactivateTimer) clearTimeout(deactivateTimer)
-  deactivateTimer = setTimeout(() => {
-    isActive.value = false
-  }, 600)
 }
 
 function move(dir: 1 | -1) {
@@ -52,32 +35,49 @@ function move(dir: 1 | -1) {
   }
 }
 
-function onTouchStart(e: TouchEvent) {
-  const touch = e.touches[0]
-  if (!touch) return
-  touchStartY = touch.clientY
-  activate()
+function onPointerDown(e: PointerEvent) {
+  pointerStartY = e.clientY
+  lastY = e.clientY
+  scrollDelta = 0
+  currentPointerId = e.pointerId
+  ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
 }
 
-function onTouchMove(e: TouchEvent) {
-  const touch = e.touches[0]
-  if (!touch) return
-  const delta = touchStartY - touch.clientY
-  if (Math.abs(delta) >= 8) {
-    move(delta > 0 ? 1 : -1)
-    touchStartY = touch.clientY
+function onPointerMove(e: PointerEvent) {
+  if (e.pointerId !== currentPointerId) return
+  const delta = lastY - e.clientY
+  lastY = e.clientY
+  scrollDelta += delta
+  if (Math.abs(scrollDelta) >= 28) {
+    move(scrollDelta > 0 ? 1 : -1)
+    scrollDelta = scrollDelta - (scrollDelta > 0 ? 28 : -28)
   }
 }
 
-function onTouchEnd() {
-  scheduleDeactivate()
+function onPointerUp(e: PointerEvent) {
+  if (e.pointerId !== currentPointerId) return
+  ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
+  const totalDisplacement = Math.abs(e.clientY - pointerStartY)
+  if (totalDisplacement < 28 && !isActive.value) {
+    syncIndex()
+    isActive.value = true
+  }
+  currentPointerId = -1
 }
 
-function onWheel(e: WheelEvent) {
-  activate()
-  move(e.deltaY > 0 ? 1 : -1)
-  scheduleDeactivate()
+function onOutsidePointerDown(e: PointerEvent) {
+  if (isActive.value && rootEl.value && !rootEl.value.contains(e.target as Node)) {
+    isActive.value = false
+  }
 }
+
+onMounted(() => {
+  document.addEventListener('pointerdown', onOutsidePointerDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('pointerdown', onOutsidePointerDown)
+})
 
 const slotItems = computed(() =>
   ([-2, -1, 0, 1, 2] as const).map(offset => {
@@ -104,12 +104,12 @@ const overlayText = computed(() => props.modelValue !== '' ? props.modelValue : 
 
 <template>
   <div
+    ref="rootEl"
     class="wheel-picker"
     :class="{ 'wheel-picker--active': isActive }"
-    @touchstart.prevent="onTouchStart"
-    @touchmove.prevent="onTouchMove"
-    @touchend="onTouchEnd"
-    @wheel.prevent="onWheel"
+    @pointerdown="onPointerDown"
+    @pointermove="onPointerMove"
+    @pointerup="onPointerUp"
   >
     <!-- 中心選取指示條（Filled Card 風格，無 border/shadow） -->
     <div class="wheel-picker__indicator" />
